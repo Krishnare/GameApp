@@ -91,7 +91,7 @@ class BattleArea extends Component {
         this.state.cols.map((col,index) => {
           selectedTabs = this.horizontalSelection(col);
           return (
-            <div className={`indent ${selectedTabs}`} id={`${row}${col}`} onMouseOver={this.mouseOver} key={`${row}${col}`} onClick={this.handleClick} > {`${row}${col}`}</div>
+            <div className={`indent ${selectedTabs}`} id={`${row}${col}`} onMouseOver={this.mouseOver} key={`${row}${col}`} onClick={this.handleClick} ></div>
           )
         })
       ) 
@@ -106,7 +106,7 @@ class BattleArea extends Component {
             selectedTabs="";
           }
           return (
-            <div className={`indent ${selectedTabs}`} id={`${row}${col}`} onMouseOver={this.mouseOver} key={`${row}${col}`} onClick={this.handleClick} > {`${row}${col}`}</div>
+            <div className={`indent ${selectedTabs}`} id={`${row}${col}`} onMouseOver={this.mouseOver} key={`${row}${col}`} onClick={this.handleClick} > </div>
           )
         })
       ) 
@@ -122,7 +122,7 @@ class BattleArea extends Component {
         }
         
         return (
-          <div className={`indent ${tabs}`} id={`${row}${col}`} onMouseOver={this.mouseOver} key={`${row}${col}`} onClick={this.handleClick} > {`${row}${col}`}</div>
+          <div className={`indent ${tabs}`} id={`${row}${col}`} onMouseOver={this.mouseOver} key={`${row}${col}`} onClick={this.handleClick} > </div>
         )
       })
     ) 
@@ -154,9 +154,12 @@ class BattleArea extends Component {
           )
         })
       }
-      <div onClick={this.cordReselected}>reselect</div>
-      <div className={`ship ${shipColor}` } onClick={this.onShipSelect}>{tabSelection}</div>
-      
+
+      <div className="button-block">
+              <buttun className="player-submit">Next</buttun>
+              <div onClick={this.cordReselected}>reselect</div>
+              <div className={`ship ${shipColor}` } onClick={this.onShipSelect}>{tabSelection}</div>
+      </div>
       
       </div>
     );
