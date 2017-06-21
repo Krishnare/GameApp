@@ -5,17 +5,19 @@ class BattleArea extends Component {
     super(props);
     this.state = {
       data: '',
-      rows: [0,1,2,3,4],
-      cols: [0,1,2,3,4],
+      rows: [0,1,2,3,4,5,6],
+      cols: [0,1,2,3,4,5,6],
       shipSelected: false,
       selectable: false,
       selectedRow: null,
       selectedCol: null,
-      horizontal: true,     
+      horizontal: true,
+      shipSize: 3,
+      selectedCods: []     
     }
   }
   mouseOver = (e) => {
-    const { horizontal } = this.state;
+    const { horizontal,shipSize,rows,cols } = this.state;
     let selectedTabs ='';
     console.log(e.target.id)
     let val = (e.target.id).split('');
@@ -24,13 +26,13 @@ class BattleArea extends Component {
       selectedCol: parseInt(val[1],10)
     });
     if(horizontal) {
-      if(parseInt(val[1],10) <= 2){     
+      if(parseInt(val[1],10) <= (cols.length-shipSize)){     
         this.setState({selectable: true});
       }else { 
         this.setState({selectable: false});
       }
     }else {
-      if(parseInt(val[0],10) <= 2){     
+      if(parseInt(val[0],10) <= (rows.length-shipSize)){     
         this.setState({selectable: true});
       }else { 
         this.setState({selectable: false});
@@ -40,55 +42,62 @@ class BattleArea extends Component {
   }
   handleClick = (e) => {
     let val = parseInt(e.target.id, 10);
-    const {horizontal, selectable} =  this.state;
-    debugger;
+    let cods = [];
+    const {horizontal, selectable, shipSize} =  this.state;
     if(horizontal && selectable) {
+      for( let i=0 ; i < shipSize ; i++){
+        cods.push(val+i);
+      }
+      
       console.log(val,val+1,val+2);
     }else if(selectable){
-      console.log(val,val+10,val+20)
+      for( let i=0 ; i < shipSize ; i++){
+        cods.push(val+(i*10));
+      }
+    }
+    this.setState({
+        selectedCods: cods,
+        shipSelected: true
+    })
+  }
+  verticalSelection = (row) => {
+    
+    const {selectable, selectedRow, shipSize} = this.state;
+    if (selectable && ( ( row >= selectedRow ) && ( row <= (selectedRow+(shipSize -1)) ) ) ){
+        return 'shipSelected';
+    }else if ( ( selectedRow  <= row ) && !selectable){
+        return 'shipUnselected';
+    }else {
+        return '';
     }
 
   }
-  verticalSelection = (row) => {
-    const {selectable, selectedRow} = this.state;
-    if(selectable){
-      if(selectedRow == row || selectedRow+1 == row || selectedRow+2 == row){
-        return 'shipSelected';
-      }else {
-        return '';
-      }
-    }else if (selectedRow == row || selectedRow+1 == row){
-        return 'shipUnselected';
-    }
-  }
   horizontalSelection = (col) => {
-    const {selectable, selectedCol} = this.state;
-    if(selectable){
-      if(selectedCol == col || selectedCol+1 == col || selectedCol+2 == col){
+    const {selectable, selectedCol, shipSize} = this.state;
+    if (selectable && ( ( col >= selectedCol ) && ( col <= (selectedCol+(shipSize -1)) ) ) ){
         return 'shipSelected';
-      }else {
-        return '';
-      }
-    }else if (selectedCol == col || selectedCol+1 == col){
+    }else if ( ( selectedCol  <= col ) && !selectable){
         return 'shipUnselected';
+    }else {
+        return '';
     }
   }
   cellDivs = (row) => {
-    const {selectedRow, horizontal, selectedCol} = this.state;
+    const {selectedRow, horizontal, selectedCol, shipSelected, shipSize, selectedCods} = this.state;
     let selectedTabs ='';
-
-    if(row == selectedRow && horizontal){
-       return(
+    
+    if(row == selectedRow && horizontal && !shipSelected){
+      return(
         this.state.cols.map((col,index) => {
           selectedTabs = this.horizontalSelection(col);
           return (
             <div className={`indent ${selectedTabs}`} id={`${row}${col}`} onMouseOver={this.mouseOver} key={`${row}${col}`} onClick={this.handleClick} > {`${row}${col}`}</div>
           )
         })
-    ) 
+      ) 
       
     }
-    else if(!horizontal){
+    else if(!horizontal && !shipSelected){
       return(
         this.state.cols.map((col,index) => {
           if(selectedCol == col){
@@ -104,20 +113,34 @@ class BattleArea extends Component {
     }
    return(
       this.state.cols.map((col,index) => {
+        let cord = `${row}${col}`;
+        let tabs = '';
+        for(let i=0; i< shipSize ; i++){
+          if(cord == selectedCods[i]  ){
+              tabs = 'shipSelected';            
+          }
+        }
+        
         return (
-          <div className={`indent ${selectedTabs}`} id={`${row}${col}`} onMouseOver={this.mouseOver} key={`${row}${col}`} onClick={this.handleClick} > {`${row}${col}`}</div>
+          <div className={`indent ${tabs}`} id={`${row}${col}`} onMouseOver={this.mouseOver} key={`${row}${col}`} onClick={this.handleClick} > {`${row}${col}`}</div>
         )
       })
     ) 
   }
+  cordReselected = () => {
+    this.setState({
+      shipSelected: false,
+      selectedCods: []
+    })
+  }
   onShipSelect = () => {
     this.setState({
-      shipSelected: !this.state.shipSelected,
       horizontal: !this.state.horizontal
     })
   }   
   render() {
-    const {rows ,shipSelected, selectable} = this.state;
+    const {rows ,shipSelected, selectable, selectedCods, horizontal} = this.state;
+    let tabSelection = horizontal ? 'Horizontal' : 'Vertical';
     let shipColor =  shipSelected ? 'shipSelected' : 'shipUnselected';
     let selectedTabs ='';
     return (
@@ -131,8 +154,8 @@ class BattleArea extends Component {
           )
         })
       }
-     
-      <div className={`ship ${shipColor}` } onClick={this.onShipSelect}>ship</div>
+      <div onClick={this.cordReselected}>reselect</div>
+      <div className={`ship ${shipColor}` } onClick={this.onShipSelect}>{tabSelection}</div>
       
       
       </div>
@@ -140,3 +163,4 @@ class BattleArea extends Component {
   } 
 }
 export default BattleArea; 
+

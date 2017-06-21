@@ -15,9 +15,21 @@ class App extends Component {
     
     return (
       <div className="App">
-        <BattleArea />
-        <input id='playerName' type='text'/>
-        <button>submit</button>
+      	<div className="user-box clearboth">
+      		<div className="user-one float-left">
+		        <div className="player-title">Player 1</div>
+		        <div>
+		        	<input id='playerName' type='text' placeholder="Please Enter name"/>
+		        </div>
+		        	<button>submit</button>
+		        
+	        </div>
+	        <div className="user-two float-left">
+	        	 <div className="player-title">Player 2</div>
+	        	 <div className="registered-user">Sai Ram</div>
+	        </div>
+	   	</div>
+	   	<BattleArea />
       </div>
     );
   } 
